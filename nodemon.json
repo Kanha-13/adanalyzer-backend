@@ -1,0 +1,6 @@
+{
+  "watch": ["./*"],
+  "ignore": ["*.test.js", "test/*","./vector-store/*","./node_modules/*"],
+  "exec": "node app.js",
+  "ext": "js json"
+}
