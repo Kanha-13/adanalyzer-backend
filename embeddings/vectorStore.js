@@ -37,4 +37,10 @@ async function initializeVectorStore(adData) {
   }
 }
 
+async function useFaissVectorStore() {
+  const embeddings = new CohereEmbeddings();
+  const vectorStore = await FaissStore.load("./vector-store", embeddings);
+  return vectorStore;
+}
+
 module.exports = { initializeVectorStore, useFaissVectorStore };
