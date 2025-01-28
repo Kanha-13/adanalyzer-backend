@@ -1,4 +1,4 @@
-const { CohereClientV2 } = require('cohere-ai');
+const { ChatCohere } = require('@langchain/cohere');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -25,21 +25,13 @@ const promptLLM = async (adData = []) => {
   }
   `;
 
-  const cohere = new CohereClientV2({
-    token: process.env.COHERE_API_KEY,
-  });
-  const response = await cohere.chat({
+  const llm = new ChatCohere({
     model: 'command-r-plus-08-2024',
-    messages: [
-      {
-        role: 'user',
-        content: prompt,
-      },
-    ],
+    temperature: 0.5,
   });
-
-  const result = JSON.parse(`${response.message.content[0].text}`);
-
+  const response = await llm.invoke(prompt);
+  console.log(JSON.parse(`${response.content}`))
+  const result = JSON.parse(`${response.content}`);
   return (
     {
       analysis: {
@@ -48,6 +40,7 @@ const promptLLM = async (adData = []) => {
         underPerformingKeywords: result.underperforming_keywords,
         generalSuggestions: result.general_suggestions,
       },
+      updatedAdData: [],
       updatedAdData: updateAdData(adData, result),
     }
   )

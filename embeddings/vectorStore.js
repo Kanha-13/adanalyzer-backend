@@ -1,7 +1,8 @@
 const { Document } = require('@langchain/core/documents');
 const { FaissStore } = require('@langchain/community/vectorstores/faiss');
 const dotenv = require('dotenv');
-const CohereEmbeddings = require('./cohereEmbedding');
+const { CohereEmbeddings } = require('@langchain/cohere');
+
 dotenv.config();
 
 
@@ -21,7 +22,9 @@ async function createAdVectorStore(adData) {
     return new Document({ pageContent, metadata });
   });
 
-  const embeddings = new CohereEmbeddings();
+  const embeddings = new CohereEmbeddings({
+    model: "embed-english-v3.0"
+  });
   const vectorStore = await FaissStore.fromDocuments(documents, embeddings);
   return vectorStore;
 }
@@ -38,7 +41,9 @@ async function initializeVectorStore(adData) {
 }
 
 async function useFaissVectorStore() {
-  const embeddings = new CohereEmbeddings();
+  const embeddings = new CohereEmbeddings({
+    model: "embed-english-v3.0"
+  });
   const vectorStore = await FaissStore.load("./vector-store", embeddings);
   return vectorStore;
 }

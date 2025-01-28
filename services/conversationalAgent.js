@@ -1,4 +1,4 @@
-const { CohereClientV2 } = require("cohere-ai");
+const { ChatCohere } = require('@langchain/cohere');
 const { PromptTemplate } = require('@langchain/core/prompts');
 const { RetrievalQAChain, loadQAStuffChain } = require('langchain/chains');
 const { BufferMemory } = require("langchain/memory");
@@ -6,53 +6,18 @@ const { useFaissVectorStore } = require('../embeddings/vectorStore');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const cohere = new CohereClientV2({
-  token: process.env.COHERE_API_KEY,
-});
-
-class CohereClientV2Wrapper {
-  constructor(apiKey) {
-    this.client = new CohereClientV2({
-      token: apiKey,
-    });
-  }
-
-  async invoke(input) {
-    try {
-      const response = await cohere.chat({
-        model: 'command-r-plus-08-2024',
-        messages: [
-          {
-            role: 'user',
-            content: `${input}`,
-          },
-        ],
-      });
-      return response.message?.content[0].text;
-    } catch (error) {
-      console.error("Error invoking Cohere model:", error);
-      throw error;
-    }
-
-  }
-
-  pipe(outputParser) {
-    this.outputParser = outputParser;
-    this.client.invoke = this.invoke;
-    return this.client
-  }
-
-}
-
 const memory = new BufferMemory({
-  memoryKey: "chat_history", 
-  returnMessages: true,      
+  memoryKey: "chat_history",
+  returnMessages: true,
   outputKey: "text"
 });
 
 const conversationalAgent = async (query) => {
   try {
-    const model = new CohereClientV2Wrapper(process.env.COHERE_API_KEY);
+    const model = new ChatCohere({
+      model: 'command-r-plus-08-2024',
+      temperature: 0.5,
+    });
     const vectorStore = await useFaissVectorStore();
     const template = `The given context is Ad performance data. Use the following pieces of context to answer the question. 
     When answering the question, please follow these guidelines:  

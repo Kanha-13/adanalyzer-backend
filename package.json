@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@langchain/cohere": "^0.3.2",
     "@langchain/community": "^0.3.27",
     "@langchain/core": "^0.3.36",
     "cohere-ai": "^7.15.4",
